@@ -109,19 +109,42 @@ class Canvas{
 	}
 
 	class Draw{
-		public Rectangle drawRectangle(Canvas canvas,Vector2Int position, uint width, uint height, ConsoleColor foregroundColor = ConsoleColor.White, ConsoleColor backgroundColor = ConsoleColor.Black, bool fill = true){
-			return drawRectangle(canvas, new Rectangle(position, width, height), foregroundColor, backgroundColor, fill);
-			
+		public static Rectangle drawRectangle(Canvas canvas,Vector2Int position, int width, int height, char character, ConsoleColor foregroundColor = ConsoleColor.White, ConsoleColor backgroundColor = ConsoleColor.Black, bool fill = true){
+			return drawRectangle(canvas, new Rectangle(position, width, height), character, foregroundColor, backgroundColor, fill);
 		}
-		public Rectangle drawRectangle(Canvas canvas, Rectangle rect, ConsoleColor foregroundColor, ConsoleColor backgroundColor , bool fill = true){
-			//TODO add the draw function
-			for (int x = rect.Origin.X; x < rect.Origin.X + rect.Width; x++){
-				if(fill){
-					
-				}else{
+		public static Rectangle drawRectangle(Canvas canvas, Rectangle rect, char character, ConsoleColor foregroundColor = ConsoleColor.White, ConsoleColor backgroundColor = ConsoleColor.Black, bool fill = true){
+			//check and resize the rect to the canvas to hinder it from throwing out of bounds
+			Rectangle rectfordrawing = checkBounds(canvas, rect);
 
+			//set the 'pixels' on the canvas
+			for (int x = rectfordrawing.Origin.X; x < rectfordrawing.Origin.X + rectfordrawing.Width; x++){
+				for (int y = rectfordrawing.Origin.Y; y < rectfordrawing.Origin.Y + rectfordrawing.Height; y++){
+					if(fill){
+						canvas.characters[x, y] = character;
+						canvas.foregroundColors[x, y] = foregroundColor;
+						canvas.backgroundColors[x, y] = backgroundColor;
+					}else if(x == rect.Origin.X || x == rect.Origin.X + rect.Width || y == rect.Origin.Y || y == rect.Origin.Y + rect.Height){
+						canvas.characters[x, y] = character;
+						canvas.foregroundColors[x, y] = foregroundColor;
+						canvas.backgroundColors[x, y] = backgroundColor;
+					}
 				}
 			}
+			return rect;
+		}
+
+		public static Rectangle drawCircle(Canvas canvas, Vector2Int position, int radius, char character, ConsoleColor foregroundColor = ConsoleColor.White, ConsoleColor backgroundColor = ConsoleColor.Black, bool fill = true){
+			Rectangle rect = new Rectangle(position, radius * 2, radius * 2);
+			Rectangle fordrawing = checkBounds(canvas, rect);
+			//TODO add draw functionality to circle
+			
+			return rect;
+		}
+		
+		private static Rectangle checkBounds(Canvas canvas, Rectangle rect){
+			//check and resize the rect to the canvas to hinder it from throwing out of bounds
+			rect.Width = rect.Origin.X + rect.Width < canvas.width ? rect.Width : canvas.width - rect.Origin.X;
+			rect.Height = rect.Origin.Y + rect.Height < canvas.height ? rect.Height : canvas.height - rect.Origin.Y;
 			return rect;
 		}
 	}
@@ -155,20 +178,20 @@ class Vector2Int{
 
 class Rectangle{
 	private Vector2Int _origin;
-	private uint _width;
-	private uint _height;
-	public uint Width{
+	private int _width;
+	private int _height;
+	public int Width{
 		get{return _width;}
 		set{_width = value;}
 	}
-	public uint Height{
+	public int Height{
 		get{return _height;}
 		set{_height = value;}
 	}
 	public Vector2Int Origin{
 		get{return _origin;}
 	}
-	public Rectangle(Vector2Int origin, uint width, uint height){
+	public Rectangle(Vector2Int origin, int width, int height){
 		_origin = origin;
 		_width = width;
 		_height = height;
