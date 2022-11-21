@@ -79,7 +79,7 @@ public class Window
 	}
 }
 
-class Canvas{
+public class Canvas{
 	private char[,] characters;
 	private ConsoleColor[,] foregroundColors;
 	private ConsoleColor[,] backgroundColors;
@@ -114,7 +114,7 @@ class Canvas{
 		Console.ResetColor();
 	}
 
-	class Draw{
+	public class Draw{
 		public static Rectangle drawRectangle(Canvas canvas,Vector2Int position, int width, int height, char character, ConsoleColor foregroundColor = ConsoleColor.White, ConsoleColor backgroundColor = ConsoleColor.Black, bool fill = true){
 			return drawRectangle(canvas, new Rectangle(position, width, height), character, foregroundColor, backgroundColor, fill);
 		}
@@ -233,7 +233,7 @@ class Canvas{
 	}
 }
 
-class Vector2Int{
+public class Vector2Int{
 	private int _X;
 	private int _Y;
 
@@ -266,7 +266,7 @@ class Vector2Int{
 	}
 }
 
-class Rectangle{
+public class Rectangle{
 	private Vector2Int _origin;
 	private int _width;
 	private int _height;
