@@ -9,13 +9,11 @@ public class Window
 	private TimeSpan old;
 	private bool running;
 	public bool IsMultithreaded;
-	private int width;
-	private int height;
 	public int Width{
-		get{return width;}
+		get{return Console.BufferWidth;}
 	}
 	public int Height{
-		get{return height;}
+		get{return Console.BufferHeight;}
 	}
 	public Window(int width, int height, string title){
 		Console.Title = title;
@@ -30,6 +28,7 @@ public class Window
 		Rendering += dorender;
 		Loading += doload;
 		Closing += doclose;
+		
 	}
 
 	public void Run(){
