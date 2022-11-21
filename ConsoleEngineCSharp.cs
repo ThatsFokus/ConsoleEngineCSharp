@@ -210,6 +210,13 @@ class Canvas{
 				}
 			}
 		}
+		public static void drawChar(Canvas canvas, Vector2Int position, char character, ConsoleColor foregroundColor = ConsoleColor.White, ConsoleColor backgroundColor = ConsoleColor.Black){
+			if(new Rectangle(new Vector2Int(0, 0), canvas.width, canvas.height).collidesWith(position)){
+				canvas.characters[position.X, position.Y] = character;
+				canvas.foregroundColors[position.X, position.Y] = foregroundColor;
+				canvas.backgroundColors[position.X, position.Y] = backgroundColor;
+			}
+		}
 		private static Rectangle checkBounds(Canvas canvas, Rectangle rect){
 			//check and resize the rect to the canvas to hinder it from throwing out of bounds
 			rect.Width = rect.Origin.X + rect.Width < canvas.width ? rect.Width : canvas.width - rect.Origin.X;
