@@ -132,15 +132,84 @@ class Canvas{
 			}
 			return rect;
 		}
-
 		public static Rectangle drawCircle(Canvas canvas, Vector2Int position, int radius, char character, ConsoleColor foregroundColor = ConsoleColor.White, ConsoleColor backgroundColor = ConsoleColor.Black, bool fill = true){
 			Rectangle rect = new Rectangle(position, radius * 2, radius * 2);
 			Rectangle fordrawing = checkBounds(canvas, rect);
 			//TODO add draw functionality to circle
 			
+			for (float i = 0; i < 360; i += 0.1f){
+				float angle = i;
+				int x1 = (int)(radius * MathF.Cos(angle * MathF.PI / 180));
+				int y1 = (int)(radius * MathF.Sin(angle * MathF.PI / 180));
+				if(fordrawing.collidesWith(new Vector2Int(x1, y1))){
+					canvas.backgroundColors[x1, y1] = backgroundColor;
+					canvas.foregroundColors[x1, y1] = foregroundColor;
+					canvas.characters[x1, y1] = character;
+					if (fill){
+						if(x1 <= position.X + radius){
+							for (int x2 = x1; x1 <= position.X + radius; x2++){
+								canvas.backgroundColors[x2, y1] = backgroundColor;
+								canvas.foregroundColors[x2, y1] = foregroundColor;
+								canvas.characters[x2, y1] = character;
+							}
+						}else{
+							for (int x2 = x1; x1 <= position.X + radius; x2--){
+								canvas.backgroundColors[x2, y1] = backgroundColor;
+								canvas.foregroundColors[x2, y1] = foregroundColor;
+								canvas.characters[x2, y1] = character;
+							}
+						}
+					}
+				}
+			}
 			return rect;
 		}
-		
+		public static void drawLine(Canvas canvas, Vector2Int start, Vector2Int end, char character, ConsoleColor foregroundColor = ConsoleColor.White, ConsoleColor backgroundColor = ConsoleColor.Black, bool fill = true){
+			Vector2Int test = end - start;
+
+			if(test.X < 0){
+				Rectangle drawRect = new Rectangle(end, test.X, test.Y);
+				for (int x = end.X; x < start.X; x++){
+					int y = start.Y - test.Y  * (x - start.X) / test.X;
+					if(drawRect.collidesWith(new Vector2Int(x, y))){
+						canvas.foregroundColors[x,y] = foregroundColor;
+						canvas.backgroundColors[x,y] = backgroundColor;
+						canvas.characters[x,y] = character;
+					}
+				}
+			}else{
+				Rectangle drawRect = new Rectangle(start, test.X, test.Y);
+				for (int x = start.X; x < end.X; x++){
+					int y = start.Y - test.Y  * (x - start.X) / test.X;
+					if(drawRect.collidesWith(new Vector2Int(x, y))){
+						canvas.foregroundColors[x,y] = foregroundColor;
+						canvas.backgroundColors[x,y] = backgroundColor;
+						canvas.characters[x,y] = character;
+					}
+				}
+			}
+		}
+		public static void drawText(Canvas canvas, Vector2Int position, string text, ConsoleColor foregroundColor = ConsoleColor.White, ConsoleColor backgroundColor = ConsoleColor.Black, bool vertical = false){
+			if(vertical){
+				for (int y = position.Y; y < position.Y + text.Length; y++){
+					if (y >= canvas.height || position.X >= canvas.width) break;
+					if (position.X + text.Length < canvas.width){
+						canvas.backgroundColors[position.X, y] = backgroundColor;
+						canvas.foregroundColors[position.X, y] = foregroundColor;
+						canvas.characters[position.X, y] = text[y - position.Y];
+					}
+					return;
+				}
+			}
+			for (int x = position.X; x < position.X + text.Length; x++){
+				if (x >= canvas.width || position.Y >= canvas.height) break;
+				if (position.X + text.Length < canvas.width){
+					canvas.backgroundColors[x, position.Y] = backgroundColor;
+					canvas.foregroundColors[x, position.Y] = foregroundColor;
+					canvas.characters[x, position.Y] = text[x - position.X];
+				}
+			}
+		}
 		private static Rectangle checkBounds(Canvas canvas, Rectangle rect){
 			//check and resize the rect to the canvas to hinder it from throwing out of bounds
 			rect.Width = rect.Origin.X + rect.Width < canvas.width ? rect.Width : canvas.width - rect.Origin.X;
@@ -173,6 +242,13 @@ class Vector2Int{
 	public Vector2Int(int x, int y){
 		_X = x;
 		_Y = y;
+	}
+
+	public static Vector2Int operator +(Vector2Int vec1, Vector2Int vec2){
+		return new Vector2Int(vec1.X + vec2.X, vec1.Y + vec2.Y);
+	}
+	public static Vector2Int operator -(Vector2Int vec1, Vector2Int vec2){
+		return new Vector2Int(vec1.X - vec2.X, vec1.Y -vec2.Y);
 	}
 }
 
