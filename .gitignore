@@ -2,3 +2,5 @@
 !.gitignore
 /bin/
 /obj/Debug/
+/obj/Release/
+/nugetpackage/
