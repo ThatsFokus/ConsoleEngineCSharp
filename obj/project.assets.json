@@ -12,7 +12,7 @@
     "D:\\Visual Studio Freie Komponenten\\NuGetPackages": {}
   },
   "project": {
-    "version": "1.0.0",
+    "version": "1.0.2",
     "restore": {
       "projectUniqueName": "E:\\RandomProjects\\ConsoleEngineCSharp\\ConsoleEngineCSharp.csproj",
       "projectName": "ThatsConsoleEngineCSharp",

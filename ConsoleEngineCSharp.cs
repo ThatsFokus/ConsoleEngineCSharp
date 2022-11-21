@@ -19,7 +19,8 @@ public class Window
 		Console.Title = title;
 		Console.OutputEncoding = System.Text.Encoding.Unicode;
 		if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows)){
-			Console.SetBufferSize(width, height);
+			Console.SetWindowSize(width, height);
+			//Console.SetBufferSize(width, height);
 		}
 		old = DateTime.Now.TimeOfDay;
 		running = false;
@@ -147,7 +148,7 @@ public class Canvas{
 				float angle = i;
 				int x1 = (int)(radius * MathF.Cos(angle * MathF.PI / 180));
 				int y1 = (int)(radius * MathF.Sin(angle * MathF.PI / 180));
-				if(fordrawing.collidesWith(new Vector2Int(x1, y1))){
+				if(fordrawing.CollidesWith(new Vector2Int(x1, y1))){
 					canvas.backgroundColors[x1, y1] = backgroundColor;
 					canvas.foregroundColors[x1, y1] = foregroundColor;
 					canvas.characters[x1, y1] = character;
@@ -177,7 +178,7 @@ public class Canvas{
 				Rectangle drawRect = new Rectangle(end, test.X, test.Y);
 				for (int x = end.X; x < start.X; x++){
 					int y = start.Y - test.Y  * (x - start.X) / test.X;
-					if(drawRect.collidesWith(new Vector2Int(x, y))){
+					if(drawRect.CollidesWith(new Vector2Int(x, y))){
 						canvas.foregroundColors[x,y] = foregroundColor;
 						canvas.backgroundColors[x,y] = backgroundColor;
 						canvas.characters[x,y] = character;
@@ -187,7 +188,7 @@ public class Canvas{
 				Rectangle drawRect = new Rectangle(start, test.X, test.Y);
 				for (int x = start.X; x < end.X; x++){
 					int y = start.Y - test.Y  * (x - start.X) / test.X;
-					if(drawRect.collidesWith(new Vector2Int(x, y))){
+					if(drawRect.CollidesWith(new Vector2Int(x, y))){
 						canvas.foregroundColors[x,y] = foregroundColor;
 						canvas.backgroundColors[x,y] = backgroundColor;
 						canvas.characters[x,y] = character;
@@ -218,7 +219,7 @@ public class Canvas{
 			}
 		}
 		public static void drawChar(Canvas canvas, Vector2Int position, char character, ConsoleColor foregroundColor = ConsoleColor.White, ConsoleColor backgroundColor = ConsoleColor.Black){
-			if(new Rectangle(new Vector2Int(0, 0), canvas.width, canvas.height).collidesWith(position)){
+			if(new Rectangle(new Vector2Int(0, 0), canvas.width, canvas.height).CollidesWith(position)){
 				canvas.characters[position.X, position.Y] = character;
 				canvas.foregroundColors[position.X, position.Y] = foregroundColor;
 				canvas.backgroundColors[position.X, position.Y] = backgroundColor;
@@ -287,7 +288,7 @@ public class Rectangle{
 		_height = height;
 	}
 
-	public bool collidesWith(Rectangle collider){
+	public bool CollidesWith(Rectangle collider){
 		bool xT = _origin.X >= collider._origin.X && _origin.X <= collider._origin.X + collider._width;
 		bool yT = _origin.Y >= collider._origin.Y && _origin.Y <= collider._origin.Y + collider._height;
 		bool xB = _origin.X + _width >= collider._origin.X && _origin.X + _width <= collider._origin.X + collider._width;
@@ -295,7 +296,7 @@ public class Rectangle{
 		return (xT || xB) && (yT || yB);
 	}
 
-	public bool collidesWith(Vector2Int point){
+	public bool CollidesWith(Vector2Int point){
 		return (point.X <= _origin.X + _width && point.X >= _origin.X && point.Y <= _origin.Y + _height && point.Y >= _origin.Y);
 	}
 	public void Move(int x, int y){
