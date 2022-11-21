@@ -28,7 +28,6 @@ public class Window
 		Rendering += dorender;
 		Loading += doload;
 		Closing += doclose;
-		
 	}
 
 	public void Run(){
@@ -103,7 +102,9 @@ class Canvas{
 
 	public void DrawToWindow(Window window, int posx = 0, int posy = 0){
 		for (int x = 0; x < width; x++){
-			for (int y = 0; y < height; y++){
+			if (x >= window.Width) break;
+			for (int y = 0; y < width; y++){
+				if (y >= window.Height) break;
 				Console.ForegroundColor = foregroundColors[x, y];
 				Console.BackgroundColor = backgroundColors[x, y];
 				Console.SetCursorPosition(posx + x, posy + y);
