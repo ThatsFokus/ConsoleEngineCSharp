@@ -33,6 +33,7 @@ public class Window
 
 	public void Run(){
 		Loading.Invoke();
+		running = true;
 		old = DateTime.Now.TimeOfDay;
 		gameloop();
 	}
