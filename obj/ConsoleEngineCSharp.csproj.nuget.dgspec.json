@@ -1,25 +1,33 @@
 {
   "format": 1,
   "restore": {
-    "C:\\PrivateProjects\\ConsoleEngineCSharp\\ConsoleEngineCSharp.csproj": {}
+    "E:\\RandomProjects\\ConsoleEngineCSharp\\ConsoleEngineCSharp.csproj": {}
   },
   "projects": {
-    "C:\\PrivateProjects\\ConsoleEngineCSharp\\ConsoleEngineCSharp.csproj": {
-      "version": "1.0.2",
+    "E:\\RandomProjects\\ConsoleEngineCSharp\\ConsoleEngineCSharp.csproj": {
+      "version": "1.0.5",
       "restore": {
-        "projectUniqueName": "C:\\PrivateProjects\\ConsoleEngineCSharp\\ConsoleEngineCSharp.csproj",
+        "projectUniqueName": "E:\\RandomProjects\\ConsoleEngineCSharp\\ConsoleEngineCSharp.csproj",
         "projectName": "ThatsConsoleEngineCSharp",
-        "projectPath": "C:\\PrivateProjects\\ConsoleEngineCSharp\\ConsoleEngineCSharp.csproj",
-        "packagesPath": "C:\\Users\\samsung\\.nuget\\packages\\",
-        "outputPath": "C:\\PrivateProjects\\ConsoleEngineCSharp\\obj\\",
+        "projectPath": "E:\\RandomProjects\\ConsoleEngineCSharp\\ConsoleEngineCSharp.csproj",
+        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
+        "outputPath": "E:\\RandomProjects\\ConsoleEngineCSharp\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "D:\\Visual Studio Freie Komponenten\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\samsung\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "E:\\MyNugetPackages": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {

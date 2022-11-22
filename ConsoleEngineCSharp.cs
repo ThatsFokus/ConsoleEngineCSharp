@@ -31,13 +31,17 @@ public class Window
 			Console.SetBufferSize(width, height);
 		}
 		this.useMultithreading = useMultithreading;
-		this.old = DateTime.Now.TimeOfDay;
+		this.oldRender = DateTime.Now.TimeOfDay;
+		this.oldUpdate = DateTime.Now.TimeOfDay;
 		this.running = false;
 		this.IsMultithreaded = false;
 		this.Updating += doupdate;
 		this.Rendering += dorender;
 		this.Loading += doload;
 		this.Closing += doclose;
+		Console.CursorVisible = false;
+		Console.CursorTop = 0;
+		Console.CursorLeft = 0;
 	}
 
 	public void Run(){
@@ -62,22 +66,29 @@ public class Window
 			oldRender = now;
 			double calcUpdate = now.Subtract(oldRender).TotalSeconds;
 			oldUpdate = now;
-			Task update = new Task(Updating);
-			Task render = new Task(Rendering);
+			
+			Task update = Task.Factory.StartNew( (deltatime) => { 
+				Updating.Invoke((double)deltatime);
+				}, calcUpdate);
+			Task render = Task.Factory.StartNew( (deltatime) => { 
+				Rendering.Invoke((double)deltatime);
+				}, calcRender);
 			while(running){
 				now = DateTime.Now.TimeOfDay;
 				if(render.Status != TaskStatus.Running){
 					calcRender = now.Subtract(oldRender).TotalSeconds;
 					oldRender = now;
-					render.Start();//TOD ADD parameters to the action
+					render = Task.Factory.StartNew( (deltatime) => { 
+					Rendering.Invoke((double)deltatime);
+					}, calcRender);
 				}
 				if(update.Status != TaskStatus.Running){
 					calcUpdate = now.Subtract(oldUpdate).TotalSeconds;
 					oldUpdate = now;
-					update.Start();//TODO
+					update = Task.Factory.StartNew( (deltatime) => { 
+					Updating.Invoke((double)deltatime);
+					}, calcUpdate);
 				}
-				render.Wait();
-				update.Wait();
 			}
 		}else{
 			while(running){
@@ -89,9 +100,7 @@ public class Window
 			}
 		}
 		Closing.Invoke();
-		}
-		
-		
+	}
 	
 
 	private void doupdate(double arg1){
