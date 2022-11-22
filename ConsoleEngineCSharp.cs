@@ -1,4 +1,7 @@
 ﻿namespace ConsoleEngineCSharp;
+using System.Runtime.InteropServices;
+using System.IO;
+using System;
 public class Window
 {
 	public Action<double> Updating; //double is seconds since last update
@@ -6,7 +9,10 @@ public class Window
 	public Action Loading;
 	public Action Closing;
 
-	private TimeSpan old;
+	private bool useMultithreading;
+
+	private TimeSpan oldRender;
+	private TimeSpan oldUpdate;
 	private bool running;
 	public bool IsMultithreaded;
 	public int Width{
@@ -15,26 +21,30 @@ public class Window
 	public int Height{
 		get{return Console.BufferHeight;}
 	}
-	public Window(int width, int height, string title){
+
+
+	public Window(int width, int height, string title, bool useMultithreading = false){
 		Console.Title = title;
 		Console.OutputEncoding = System.Text.Encoding.Unicode;
-		if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows)){
+		if (RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows)){
 			Console.SetWindowSize(width, height);
-			//Console.SetBufferSize(width, height);
+			Console.SetBufferSize(width, height);
 		}
-		old = DateTime.Now.TimeOfDay;
-		running = false;
-		IsMultithreaded = false;
-		Updating += doupdate;
-		Rendering += dorender;
-		Loading += doload;
-		Closing += doclose;
+		this.useMultithreading = useMultithreading;
+		this.old = DateTime.Now.TimeOfDay;
+		this.running = false;
+		this.IsMultithreaded = false;
+		this.Updating += doupdate;
+		this.Rendering += dorender;
+		this.Loading += doload;
+		this.Closing += doclose;
 	}
 
 	public void Run(){
 		Loading.Invoke();
 		running = true;
-		old = DateTime.Now.TimeOfDay;
+		oldRender = DateTime.Now.TimeOfDay;
+		oldUpdate = oldRender;
 		gameloop();
 	}
 
@@ -46,15 +56,43 @@ public class Window
 	}
 
 	private void gameloop(){
-		while(running){
+		if(IsMultithreaded){
 			var now = DateTime.Now.TimeOfDay;
-			double calc = now.Subtract(old).TotalSeconds;
-			old = now;
-			Updating.Invoke(calc);
-			Rendering.Invoke(calc);
+			double calcRender = now.Subtract(oldRender).TotalSeconds;
+			oldRender = now;
+			double calcUpdate = now.Subtract(oldRender).TotalSeconds;
+			oldUpdate = now;
+			Task update = new Task(Updating);
+			Task render = new Task(Rendering);
+			while(running){
+				now = DateTime.Now.TimeOfDay;
+				if(render.Status != TaskStatus.Running){
+					calcRender = now.Subtract(oldRender).TotalSeconds;
+					oldRender = now;
+					render.Start();//TOD ADD parameters to the action
+				}
+				if(update.Status != TaskStatus.Running){
+					calcUpdate = now.Subtract(oldUpdate).TotalSeconds;
+					oldUpdate = now;
+					update.Start();//TODO
+				}
+				render.Wait();
+				update.Wait();
+			}
+		}else{
+			while(running){
+				var now = DateTime.Now.TimeOfDay;
+				var calc = now.Subtract(oldRender).TotalSeconds;
+				oldRender = now;
+				Updating.Invoke(calc);
+				Rendering.Invoke(calc);
+			}
 		}
 		Closing.Invoke();
-	}
+		}
+		
+		
+	
 
 	private void doupdate(double arg1){
 
@@ -96,13 +134,15 @@ public class Canvas{
 		for (int x = 0; x < width; x++){
 			for (int y = 0; y < height; y++){
 				backgroundColors[x,y] = ConsoleColor.Black;
-				backgroundColors[x,y] = ConsoleColor.White;
-				characters[x,y] = '#';
+				backgroundColors[x,y] = ConsoleColor.Black;
+				characters[x,y] = ' ';
 			}
 		}
 	}
 
 	public void DrawToWindow(Window window, int posx = 0, int posy = 0){
+		
+
 		for (int x = 0; x < width; x++){
 			if (x >= window.Width) break;
 			for (int y = 0; y < width; y++){
@@ -227,6 +267,14 @@ public class Canvas{
 			}
 		}
 		private static Rectangle checkBounds(Canvas canvas, Rectangle rect){
+			if(rect.Origin.X < 0){
+				rect.Width += rect.Origin.X;
+				rect.Origin.X = 0;
+			}
+			if(rect.Origin.Y < 0){
+				rect.Height += rect.Origin.Y;
+				rect.Origin.Y = 0;
+			}
 			//check and resize the rect to the canvas to hinder it from throwing out of bounds
 			rect.Width = rect.Origin.X + rect.Width < canvas.width ? rect.Width : canvas.width - rect.Origin.X;
 			rect.Height = rect.Origin.Y + rect.Height < canvas.height ? rect.Height : canvas.height - rect.Origin.Y;
